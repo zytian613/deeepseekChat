@@ -1,0 +1,53 @@
+// DeepSeek Chat - Prisma schema
+// 会话、消息、提示词模板
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  system
+  user
+  assistant
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  title     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+
+  @@index([updatedAt])
+}
+
+model Message {
+  id               String       @id @default(cuid())
+  conversationId   String
+  conversation     Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role             Role
+  content          String
+  reasoningContent String?
+  model            String?
+  tokenCount       Int?
+  createdAt        DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model PromptTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  content     String
+  description String?
+  tags        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([updatedAt])
+}

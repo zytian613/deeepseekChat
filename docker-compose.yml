@@ -1,0 +1,18 @@
+# 可选：Docker Compose（未在本机验证 —— 本机未安装 Docker）
+# 使用前请先创建 .env.local 并填写 DEEPSEEK_API_KEY
+
+services:
+  deepseek-chat:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      # 容器内数据库固定写到持久化卷
+      DATABASE_URL: file:/app/data/dev.db
+    volumes:
+      - chat-data:/app/data
+
+volumes:
+  chat-data:
